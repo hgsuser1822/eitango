@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>英単語アプリ</title>
+
+    <link rel="stylesheet" href="/style.css">
 
     <style>
         body {
@@ -41,6 +44,9 @@
         }
 
         button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
             font-size: 18px;
             padding: 12px 25px;
             border: none;
@@ -53,6 +59,10 @@
         button:hover {
             background-color: #1d4ed8;
         }
+
+        #result {
+            margin-top: 30px;
+        }
     </style>
 </head>
 
@@ -62,21 +72,44 @@
 
     <h1>英単語アプリ</h1>
 
-    <div class="word" th:text="${word}"></div>
+    <h1 th:text="${word}"></h1>
 
-    <div class="meaning" id="meaning" style="display: none;">
-        りんご
+    <div class="choices">
+        <button th:each="choice : ${choices}"
+                type="button"
+                th:text="${choice}"
+                th:attr="data-choice=${choice}"
+                onclick="checkAnswer(this.dataset.choice)">
+        </button>
     </div>
 
-    <button onclick="showAnswer()">
-        答えを見る
-    </button>
+
+    <div id="result"></div>
 
 </div>
 
 <script>
-    function showAnswer() {
-        document.getElementById("meaning").style.display = "block";
+    function checkAnswer(choice) {
+
+        fetch("/answer?choice=" + encodeURIComponent(choice), {
+            method: "POST"
+        })
+        .then(response => response.text())
+        .then(result => {
+
+            const resultElement = document.getElementById("result");
+
+            if (result === "correct") {
+                resultElement.textContent = "〇";
+                resultElement.style.color = "#22c55e";
+            } else {
+                resultElement.textContent = "×";
+                resultElement.style.color = "#ef4444";
+            }
+
+            resultElement.style.fontSize = "100px";
+            resultElement.style.fontWeight = "bold";
+        });
     }
 </script>
 

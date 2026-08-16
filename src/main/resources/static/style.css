@@ -1,0 +1,14 @@
+.choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.choices button {
+    padding: 15px;
+    font-size: 18px;
+    cursor: pointer;
+}
