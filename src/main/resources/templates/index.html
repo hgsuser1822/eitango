@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英単語アプリ</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f5f7fa;
+            padding-top: 80px;
+        }
+
+        .app {
+            background: white;
+            width: 400px;
+            max-width: 90%;
+            margin: auto;
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .word {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 40px 0 20px;
+            color: #2563eb;
+        }
+
+        .meaning {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background-color: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <h1>英単語アプリ</h1>
+
+    <div class="word" th:text="${word}"></div>
+
+    <div class="meaning" id="meaning" style="display: none;">
+        りんご
+    </div>
+
+    <button onclick="showAnswer()">
+        答えを見る
+    </button>
+
+</div>
+
+<script>
+    function showAnswer() {
+        document.getElementById("meaning").style.display = "block";
+    }
+</script>
+
+</body>
+</html>
