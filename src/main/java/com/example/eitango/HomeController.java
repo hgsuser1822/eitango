@@ -15,24 +15,37 @@ public class HomeController {
 
     // 単語と意味の辞書
     Map<String, String> words = Map.of(
-            "apple", "りんご",
-            "book", "本",
-            "cat", "猫"
+            "appraisal", "査定",
+            "proceeds", "収益",
+            "inclement", "荒れ模様の"
     );
 
+
+    // ホーム
     @GetMapping("/")
     public String home(Model model) {
 
-        String word = "apple";
+        model.addAttribute("page", "home");
+
+        return "index";
+    }
+
+
+    // 単語
+    @GetMapping("/quiz")
+    public String quiz(Model model) {
+
+        String word = "appraisal";
         String meaning = words.get(word);
 
         List<String> choices = List.of(
-                "りんご",
-                "本",
-                "猫",
-                "学校"
+                "査定",
+                "収益",
+                "荒れ模様の",
+                "出来事"
         );
 
+        model.addAttribute("page", "quiz");
         model.addAttribute("word", word);
         model.addAttribute("meaning", meaning);
         model.addAttribute("choices", choices);
@@ -40,11 +53,43 @@ public class HomeController {
         return "index";
     }
 
+
+    // 学習
+    @GetMapping("/study")
+    public String study(Model model) {
+
+        model.addAttribute("page", "study");
+
+        return "index";
+    }
+
+
+    // 履歴
+    @GetMapping("/history")
+    public String history(Model model) {
+
+        model.addAttribute("page", "history");
+
+        return "index";
+    }
+
+
+    // 設定
+    @GetMapping("/settings")
+    public String settings(Model model) {
+
+        model.addAttribute("page", "settings");
+
+        return "index";
+    }
+
+
+    // 回答チェック
     @PostMapping("/answer")
     @ResponseBody
     public String answer(@RequestParam String choice) {
 
-        String word = "apple";
+        String word = "appraisal";
 
         String correctAnswer = words.get(word);
 
@@ -54,6 +99,4 @@ public class HomeController {
             return "incorrect";
         }
     }
-
-
 }

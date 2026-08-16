@@ -1,3 +1,65 @@
+/* =========================
+   全体
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #f5f7fa;
+    padding-bottom: 80px;
+}
+
+
+/* =========================
+   共通レイアウト
+========================= */
+
+.content {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+
+/* =========================
+   ホーム
+========================= */
+
+.home-title {
+    margin-top: 100px;
+    font-size: 32px;
+}
+
+
+/* =========================
+   英単語問題
+========================= */
+
+.app {
+    background: white;
+    width: 400px;
+    max-width: 100%;
+    margin: 30px auto;
+    padding: 40px 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.word {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 40px 0 20px;
+    color: #2563eb;
+}
+
+
+/* =========================
+   選択肢
+========================= */
+
 .choices {
     display: flex;
     flex-direction: column;
@@ -7,8 +69,94 @@
     margin: 20px auto;
 }
 
+
+/* 選択肢ボタン */
+
 .choices button {
     padding: 15px;
     font-size: 18px;
     cursor: pointer;
+}
+
+
+/* 共通ボタン */
+
+button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    font-size: 18px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1d4ed8;
+}
+
+
+/* =========================
+   正解・不正解
+========================= */
+
+#result {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-size: 160px;
+    font-weight: bold;
+
+    z-index: 100;
+    pointer-events: none;
+}
+
+
+/* =========================
+   下部ナビゲーション
+========================= */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+
+    background-color: white;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    border-top: 1px solid #ddd;
+}
+
+.bottom-nav a {
+    text-decoration: none;
+    color: #777;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-size: 12px;
+}
+
+.bottom-nav a span {
+    font-size: 24px;
+    margin-bottom: 3px;
+}
+
+
+/* 現在いるページ */
+
+.bottom-nav a.active {
+    color: #2563eb;
+    font-weight: bold;
 }

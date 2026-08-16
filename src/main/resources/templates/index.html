@@ -4,114 +4,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>英単語アプリ</title>
-
     <link rel="stylesheet" href="/style.css">
-
-    <style>
-        body {
-            font-family: sans-serif;
-            text-align: center;
-            background-color: #f5f7fa;
-            padding-top: 80px;
-        }
-
-        .app {
-            background: white;
-            width: 400px;
-            max-width: 90%;
-            margin: auto;
-            padding: 40px 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        .word {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 40px 0 20px;
-            color: #2563eb;
-        }
-
-        .meaning {
-            font-size: 28px;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            font-size: 18px;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            background-color: #2563eb;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #1d4ed8;
-        }
-
-        #result {
-            margin-top: 30px;
-        }
-    </style>
 </head>
-
 <body>
 
-<div class="app">
 
-    <h1>英単語アプリ</h1>
+<div class="content">
 
-    <h1 th:text="${word}"></h1>
 
-    <div class="choices">
-        <button th:each="choice : ${choices}"
-                type="button"
-                th:text="${choice}"
-                th:attr="data-choice=${choice}"
-                onclick="checkAnswer(this.dataset.choice)">
-        </button>
+    <!-- ホーム画面 -->
+
+    <div th:if="${page == 'home'}">
+
+        <h1 class="home-title">
+            英単語アプリ
+        </h1>
+
     </div>
 
 
-    <div id="result"></div>
+
+    <!-- 単語画面 -->
+
+    <div th:if="${page == 'quiz'}">
+
+        <div class="app">
+
+            <h1>英単語問題</h1>
+
+            <div class="word"
+                 th:text="${word}">
+            </div>
+
+
+            <div class="choices">
+
+                <button th:each="choice : ${choices}"
+                        type="button"
+                        th:text="${choice}"
+                        th:attr="data-choice=${choice}"
+                        onclick="checkAnswer(this.dataset.choice)">
+                </button>
+
+            </div>
+
+
+            <div id="result"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- 学習画面 -->
+
+    <div th:if="${page == 'study'}">
+
+        <h1>学習</h1>
+
+        <p>ここに学習機能を作ります。</p>
+
+    </div>
+
+
+
+    <!-- 履歴画面 -->
+
+    <div th:if="${page == 'history'}">
+
+        <h1>履歴</h1>
+
+        <p>ここに学習履歴を表示します。</p>
+
+    </div>
+
+
+
+    <!-- 設定画面 -->
+
+    <div th:if="${page == 'settings'}">
+
+        <h1>設定</h1>
+
+        <p>ここに設定を作ります。</p>
+
+    </div>
 
 </div>
 
+
+
+<!-- 下の5つのボタン -->
+
+<nav class="bottom-nav">
+
+
+    <a href="/"
+       th:classappend="${page == 'home'} ? 'active' : ''">
+
+        <span>🏠</span>
+
+        ホーム
+
+    </a>
+
+
+    <a href="/quiz"
+       th:classappend="${page == 'quiz'} ? 'active' : ''">
+
+        <span>📖</span>
+
+        単語
+
+    </a>
+
+
+    <a href="/study"
+       th:classappend="${page == 'study'} ? 'active' : ''">
+
+        <span>🎯</span>
+
+        学習
+
+    </a>
+
+
+    <a href="/history"
+       th:classappend="${page == 'history'} ? 'active' : ''">
+
+        <span>📊</span>
+
+        履歴
+
+    </a>
+
+
+    <a href="/settings"
+       th:classappend="${page == 'settings'} ? 'active' : ''">
+
+        <span>⚙️</span>
+
+        設定
+
+    </a>
+
+
+</nav>
+
+
+
 <script>
+
     function checkAnswer(choice) {
 
         fetch("/answer?choice=" + encodeURIComponent(choice), {
             method: "POST"
         })
+
         .then(response => response.text())
+
         .then(result => {
 
-            const resultElement = document.getElementById("result");
+            const resultElement =
+                document.getElementById("result");
+
 
             if (result === "correct") {
+
                 resultElement.textContent = "〇";
+
                 resultElement.style.color = "#22c55e";
+
             } else {
+
                 resultElement.textContent = "×";
+
                 resultElement.style.color = "#ef4444";
+
             }
 
-            resultElement.style.fontSize = "100px";
-            resultElement.style.fontWeight = "bold";
         });
+
     }
+
 </script>
+
 
 </body>
 </html>
