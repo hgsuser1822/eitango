@@ -59,15 +59,36 @@
 
 
 
-    <!-- 学習画面 -->
+<div th:if="${page == 'study'}">
 
-    <div th:if="${page == 'study'}">
+    <h1>🎧 リスニング</h1>
 
-        <h1>学習</h1>
+    <button type="button" onclick="generateListening()">
+        リスニングを生成
+    </button>
 
-        <p>ここに学習機能を作ります。</p>
+    <div id="loading" style="display: none;">
+        生成中...
+    </div>
+
+    <div id="script"
+         style="margin-top: 20px;">
+    </div>
+
+    <div id="audio-area"
+         style="display: none; margin-top: 20px;">
+
+        <audio id="audio"
+               controls>
+            <source src="/audio"
+                    type="audio/mpeg">
+
+        </audio>
 
     </div>
+
+</div>
+
 
 
 
@@ -94,8 +115,6 @@
     </div>
 
 </div>
-
-
 
 <!-- 下の5つのボタン -->
 
@@ -125,9 +144,9 @@
     <a href="/study"
        th:classappend="${page == 'study'} ? 'active' : ''">
 
-        <span>🎯</span>
+        <span>🎧</span>
 
-        学習
+        リスニング
 
     </a>
 
@@ -189,8 +208,71 @@
         });
 
     }
+      function generateListening() {
 
+    const loading =
+        document.getElementById("loading");
+
+    const script =
+        document.getElementById("script");
+
+    const audioArea =
+        document.getElementById("audio-area");
+
+    const audio =
+        document.getElementById("audio");
+
+
+    // 生成中表示
+    loading.style.display = "block";
+
+    script.textContent = "";
+
+    audioArea.style.display = "none";
+
+
+    fetch("/generate-listening")
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("リスニング生成に失敗しました");
+            }
+
+            return response.text();
+        })
+
+        .then(text => {
+
+        // 英文を表示
+        script.textContent = text;
+        // 最新の音声を読み込む
+        audio.src =
+            "/audio?t=" + Date.now();
+        audio.load();
+        audioArea.style.display = "block";
+
+        // 音声を再生
+        audio.play();
+
+    })
+
+
+        .catch(error => {
+
+            script.textContent =
+                "エラー: " + error.message;
+
+        })
+
+        .finally(() => {
+
+            loading.style.display = "none";
+
+        });
+}
 </script>
+
 
 
 </body>

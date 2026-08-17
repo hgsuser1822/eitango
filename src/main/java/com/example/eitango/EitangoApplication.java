@@ -1,3 +1,5 @@
+//以下はEitangoApplication.java
+
 package com.example.eitango;
 
 import org.springframework.boot.SpringApplication;

@@ -10,8 +10,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 @Controller
 public class HomeController {
+
+    private final ListeningService listeningService;
+
+
+    public HomeController(ListeningService listeningService) {
+        this.listeningService = listeningService;
+    }
+
 
     // 単語と意味の辞書
     Map<String, String> words = Map.of(
@@ -99,4 +113,62 @@ public class HomeController {
             return "incorrect";
         }
     }
+
+
+    // Google TTSテスト
+    @GetMapping("/tts-test")
+    @ResponseBody
+    public String ttsTest() {
+
+        String text =
+                "Hello. This is a test of Google Cloud Text to Speech.";
+
+        listeningService.createSpeech(text);
+
+        return "TTS成功！ output.mp3 を作成しました。";
+    }
+
+
+    // Groq → Google TTS
+    @GetMapping("/generate-listening")
+    @ResponseBody
+    public String generateListening() {
+
+        try {
+
+            String script =
+                    listeningService.generateListening();
+
+            return script;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return "リスニング生成エラー: " + e.getMessage();
+        }
+    }
+    // 生成された音声をブラウザに返す
+    @GetMapping("/audio")
+    @ResponseBody
+    public ResponseEntity<byte[]> audio() {
+
+    try {
+
+        Path path = Path.of("output.mp3");
+
+        byte[] audio = Files.readAllBytes(path);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("audio/mpeg"))
+                .body(audio);
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return ResponseEntity.notFound().build();
+    }
+}
+
 }
