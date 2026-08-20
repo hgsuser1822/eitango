@@ -10,11 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Controller
 public class HomeController {
@@ -148,27 +144,6 @@ public class HomeController {
             return "リスニング生成エラー: " + e.getMessage();
         }
     }
-    // 生成された音声をブラウザに返す
-    @GetMapping("/audio")
-    @ResponseBody
-    public ResponseEntity<byte[]> audio() {
-
-    try {
-
-        Path path = Path.of("output.mp3");
-
-        byte[] audio = Files.readAllBytes(path);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("audio/mpeg"))
-                .body(audio);
-
-    } catch (Exception e) {
-
-        e.printStackTrace();
-
-        return ResponseEntity.notFound().build();
-    }
-}
+    
 
 }

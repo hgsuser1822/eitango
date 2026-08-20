@@ -2,25 +2,26 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>英単語アプリ</title>
-    <link rel="stylesheet" href="/style.css">
+  <title>英単語アプリ</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
 
 
-<div class="content">
+  <div class="content">
 
 
     <!-- ホーム画面 -->
 
     <div th:if="${page == 'home'}">
 
-        <h1 class="home-title">
-            英単語アプリ
-        </h1>
+      <h1 class="home-title">
+        英単語アプリ
+      </h1>
 
     </div>
 
@@ -30,64 +31,62 @@
 
     <div th:if="${page == 'quiz'}">
 
-        <div class="app">
+      <div class="app">
 
-            <h1>英単語問題</h1>
+        <h1>英単語問題</h1>
 
-            <div class="word"
-                 th:text="${word}">
-            </div>
-
-
-            <div class="choices">
-
-                <button th:each="choice : ${choices}"
-                        type="button"
-                        th:text="${choice}"
-                        th:attr="data-choice=${choice}"
-                        onclick="checkAnswer(this.dataset.choice)">
-                </button>
-
-            </div>
+        <div class="word" th:text="${word}">
+        </div>
 
 
-            <div id="result"></div>
+        <div class="choices">
+
+          <button th:each="choice : ${choices}" type="button" th:text="${choice}" th:attr="data-choice=${choice}"
+            onclick="checkAnswer(this.dataset.choice)">
+          </button>
 
         </div>
 
+
+        <div id="result"></div>
+
+      </div>
+
     </div>
 
 
 
-<div th:if="${page == 'study'}">
+    <div th:if="${page == 'study'}">
 
-    <h1>🎧 リスニング</h1>
+      <h1>🎧 リスニング</h1>
 
-    <button type="button" onclick="generateListening()">
+      <button type="button" onclick="generateListening()">
         リスニングを生成
-    </button>
+      </button>
 
-    <div id="loading" style="display: none;">
+      <div id="loading" style="display: none;">
         生成中...
-    </div>
+      </div>
 
-    <div id="script"
-         style="margin-top: 20px;">
-    </div>
+      <div id="script"
+        style="display: none; margin-top: 20px; white-space: pre-line; line-height: 1.8; text-align: left;">
+      </div>
 
-    <div id="audio-area"
-         style="display: none; margin-top: 20px;">
+      <button id="script-button" type="button" onclick="toggleScript()" style="display: none; margin-top: 15px;">
+        スクリプトを見る
+      </button>
 
-        <audio id="audio"
-               controls>
-            <source src="/audio"
-                    type="audio/mpeg">
+
+      <div id="audio-area" style="display: none; margin-top: 20px;">
+
+        <audio id="audio" controls>
+          <source src="/output.mp3" type="audio/mpeg">
 
         </audio>
 
-    </div>
+      </div>
 
-</div>
+    </div>
 
 
 
@@ -96,9 +95,9 @@
 
     <div th:if="${page == 'history'}">
 
-        <h1>履歴</h1>
+      <h1>履歴</h1>
 
-        <p>ここに学習履歴を表示します。</p>
+      <p>ここに学習履歴を表示します。</p>
 
     </div>
 
@@ -108,172 +107,189 @@
 
     <div th:if="${page == 'settings'}">
 
-        <h1>設定</h1>
+      <h1>設定</h1>
 
-        <p>ここに設定を作ります。</p>
+      <p>ここに設定を作ります。</p>
 
     </div>
 
-</div>
+  </div>
 
-<!-- 下の5つのボタン -->
+  <!-- 下の5つのボタン -->
 
-<nav class="bottom-nav">
-
-
-    <a href="/"
-       th:classappend="${page == 'home'} ? 'active' : ''">
-
-        <span>🏠</span>
-
-        ホーム
-
-    </a>
+  <nav class="bottom-nav">
 
 
-    <a href="/quiz"
-       th:classappend="${page == 'quiz'} ? 'active' : ''">
+    <a href="/" th:classappend="${page == 'home'} ? 'active' : ''">
 
-        <span>📖</span>
+      <span>🏠</span>
 
-        単語
+      ホーム
 
     </a>
 
 
-    <a href="/study"
-       th:classappend="${page == 'study'} ? 'active' : ''">
+    <a href="/quiz" th:classappend="${page == 'quiz'} ? 'active' : ''">
 
-        <span>🎧</span>
+      <span>📖</span>
 
-        リスニング
-
-    </a>
-
-
-    <a href="/history"
-       th:classappend="${page == 'history'} ? 'active' : ''">
-
-        <span>📊</span>
-
-        履歴
+      単語
 
     </a>
 
 
-    <a href="/settings"
-       th:classappend="${page == 'settings'} ? 'active' : ''">
+    <a href="/study" th:classappend="${page == 'study'} ? 'active' : ''">
 
-        <span>⚙️</span>
+      <span>🎧</span>
 
-        設定
+      リスニング
 
     </a>
 
 
-</nav>
+    <a href="/history" th:classappend="${page == 'history'} ? 'active' : ''">
+
+      <span>📊</span>
+
+      履歴
+
+    </a>
+
+
+    <a href="/settings" th:classappend="${page == 'settings'} ? 'active' : ''">
+
+      <span>⚙️</span>
+
+      設定
+
+    </a>
+
+
+  </nav>
 
 
 
-<script>
+  <script>
 
     function checkAnswer(choice) {
 
-        fetch("/answer?choice=" + encodeURIComponent(choice), {
-            method: "POST"
-        })
+      fetch("/answer?choice=" + encodeURIComponent(choice), {
+        method: "POST"
+      })
 
         .then(response => response.text())
 
         .then(result => {
 
-            const resultElement =
-                document.getElementById("result");
+          const resultElement =
+            document.getElementById("result");
 
 
-            if (result === "correct") {
+          if (result === "correct") {
 
-                resultElement.textContent = "〇";
+            resultElement.textContent = "〇";
 
-                resultElement.style.color = "#22c55e";
+            resultElement.style.color = "#22c55e";
 
-            } else {
+          } else {
 
-                resultElement.textContent = "×";
+            resultElement.textContent = "×";
 
-                resultElement.style.color = "#ef4444";
+            resultElement.style.color = "#ef4444";
 
-            }
+          }
 
         });
 
     }
-      function generateListening() {
-
-    const loading =
+    function generateListening() {
+      const loading =
         document.getElementById("loading");
-
-    const script =
+      const script =
         document.getElementById("script");
-
-    const audioArea =
+      const audioArea =
         document.getElementById("audio-area");
-
-    const audio =
+      const audio =
         document.getElementById("audio");
 
+      // 生成中表示
+      loading.style.display = "block";
+      script.textContent = "";
+      audioArea.style.display = "none";
 
-    // 生成中表示
-    loading.style.display = "block";
-
-    script.textContent = "";
-
-    audioArea.style.display = "none";
-
-
-    fetch("/generate-listening")
+      fetch("/generate-listening")
 
         .then(response => {
 
-            if (!response.ok) {
-                throw new Error("リスニング生成に失敗しました");
-            }
+          if (!response.ok) {
+            throw new Error("リスニング生成に失敗しました");
+          }
 
-            return response.text();
+          return response.json();
         })
 
-        .then(text => {
+        .then(data => {
 
-        // 英文を表示
-        script.textContent = text;
-        // 最新の音声を読み込む
-        audio.src =
-            "/audio?t=" + Date.now();
-        audio.load();
-        audioArea.style.display = "block";
+          // 今回生成されたスクリプト
+          script.textContent = data.script;
 
-        // 音声を再生
-        audio.play();
-
-    })
+          // 最初は隠す
+          script.style.display = "none";
 
 
-        .catch(error => {
+          // スクリプトボタンを表示
+          const scriptButton =
+            document.getElementById("script-button");
 
-            script.textContent =
-                "エラー: " + error.message;
+          scriptButton.style.display = "block";
+          scriptButton.textContent = "スクリプトを見る";
+
+
+          // 今回生成された音声ファイルを指定
+          audio.src = data.audio;
+
+          audio.load();
+
+          audioArea.style.display = "block";
+
+
+          // 自動再生
+          audio.play().catch(error => {
+
+            console.log(
+              "自動再生はブロックされました:",
+              error
+            );
+
+          });
 
         })
+    }
+    function toggleScript() {
+      alert("ボタンが押されました");
+      const script =
+        document.getElementById("script");
 
-        .finally(() => {
+      const button =
+        document.getElementById("script-button");
 
-            loading.style.display = "none";
+      if (script.style.display === "none") {
 
-        });
-}
-</script>
+        script.style.display = "block";
+        button.textContent = "スクリプトを隠す";
+
+      } else {
+
+        script.style.display = "none";
+        button.textContent = "スクリプトを見る";
+
+      }
+
+    }
+  </script>
 
 
 
 </body>
+
 </html>
