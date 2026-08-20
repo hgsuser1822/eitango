@@ -117,7 +117,6 @@
         <div id="audio-area" style="display: none; margin-top: 20px;">
 
           <audio id="audio" controls>
-            <source src="/output.mp3" type="audio/mpeg">
 
           </audio>
 
@@ -219,17 +218,14 @@
             const resultElement =
               document.getElementById("result");
 
-
             if (result === "correct") {
 
               resultElement.textContent = "〇";
-
               resultElement.style.color = "#22c55e";
 
             } else {
 
               resultElement.textContent = "×";
-
               resultElement.style.color = "#ef4444";
 
             }
@@ -237,6 +233,12 @@
           });
 
       }
+
+
+      // =========================
+      // リスニング生成
+      // =========================
+
       function generateListening() {
 
         const loading =
@@ -272,6 +274,13 @@
           document.getElementById("freedom-select").value;
 
 
+        console.log("送信する条件:");
+        console.log("situation:", situation);
+        console.log("level:", level);
+        console.log("length:", length);
+        console.log("freedom:", freedom);
+
+
         // =========================
         // 生成中
         // =========================
@@ -297,12 +306,15 @@
           .then(response => {
 
             if (!response.ok) {
+
               throw new Error(
                 "Javaからエラーが返されました"
               );
+
             }
 
             return response.json();
+
           })
 
           .then(data => {
@@ -319,18 +331,19 @@
             script.style.display = "none";
 
             scriptButton.style.display = "block";
-            scriptButton.textContent = "スクリプトを見る";
+
+            scriptButton.textContent =
+              "スクリプトを見る";
 
 
             // =========================
             // 音声
             // =========================
 
-            console.log("音声URL:", data.audio);
-
-            audio.src = data.audio;
-
-            audio.load();
+            console.log(
+              "音声URL:",
+              data.audio
+            );
 
 
             // =========================
@@ -339,7 +352,9 @@
 
             audio.oncanplay = function () {
 
-              console.log("音声の読み込み成功");
+              console.log(
+                "音声の読み込み成功"
+              );
 
               audioArea.style.display = "block";
 
@@ -355,18 +370,28 @@
                 );
 
               });
+
             };
 
 
             // =========================
-            // 音声読み込みエラー
+            // 音声読み込み失敗
             // =========================
 
             audio.onerror = function () {
 
               console.error(
-                "音声ファイルの読み込みに失敗しました",
+                "音声ファイルの読み込みに失敗しました"
+              );
+
+              console.error(
+                "audio.error:",
                 audio.error
+              );
+
+              console.error(
+                "読み込もうとしたURL:",
+                audio.src
               );
 
               loading.style.display = "none";
@@ -374,7 +399,17 @@
               alert(
                 "音声ファイルの読み込みに失敗しました。"
               );
+
             };
+
+
+            // =========================
+            // 音声URLを設定
+            // =========================
+
+            audio.src = data.audio;
+
+            audio.load();
 
           })
 
@@ -390,31 +425,45 @@
             alert(
               "リスニング生成に失敗しました。"
             );
+
           });
+
       }
 
+
+      // =========================
+      // スクリプト表示・非表示
+      // =========================
+
       function toggleScript() {
-        alert("ボタンが押されました");
+
         const script =
           document.getElementById("script");
 
         const button =
           document.getElementById("script-button");
 
+
         if (script.style.display === "none") {
 
           script.style.display = "block";
-          button.textContent = "スクリプトを隠す";
+
+          button.textContent =
+            "スクリプトを隠す";
 
         } else {
 
           script.style.display = "none";
-          button.textContent = "スクリプトを見る";
+
+          button.textContent =
+            "スクリプトを見る";
 
         }
 
       }
+
     </script>
+
 
 
 

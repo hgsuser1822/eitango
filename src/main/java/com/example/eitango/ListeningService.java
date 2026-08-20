@@ -49,91 +49,88 @@ public class ListeningService {
     double temperature = 0.7;
 
     if ("almost_fixed".equals(freedom)) {
-        temperature = 0.2;
+      temperature = 0.2;
     } else if ("normal".equals(freedom)) {
-        temperature = 0.7;
+      temperature = 0.7;
     } else if ("slightly_strange".equals(freedom)) {
-        temperature = 1.2;
+      temperature = 1.2;
     } else if ("crazy".equals(freedom)) {
-        temperature = 1.8;
+      temperature = 1.8;
     }
 
-  String userPrompt = """
-      Create a short English conversation.
+    String userPrompt = """
+        Create a short English conversation.
 
-      Situation: %s
-      English level: %s
-      Length: approximately %s seconds
+        Situation: %s
+        English level: %s
+        Length: approximately %s seconds
 
-      Use exactly two speakers.
-      Label them only as A and B.
-      Start each line with either A: or B:.
+        Use exactly two speakers.
+        Label them only as A and B.
+        Start each line with either A: or B:.
 
-      Do not use names, job titles, or role names.
-      Alternate between the two speakers naturally.
-      Do not include any other speakers.
+        Do not use names, job titles, or role names.
+        Alternate between the two speakers naturally.
+        Do not include any other speakers.
 
-      Do not include a title, explanation, Markdown, Japanese, or pronunciation notes.
-      """.formatted(
-      situation,
-      level,
-      length,
-      freedom);
+        Do not include a title, explanation, Markdown, Japanese, or pronunciation notes.
+        """.formatted(
+        situation,
+        level,
+        length,
+        freedom);
 
-  String requestBody = """
-      {
-        "model": "openai/gpt-oss-120b",
-        "messages": [
-          {
-            "role": "system",
-            "content": "You create English listening conversations for Japanese learners."
-          },
-          {
-            "role": "user",
-            "content": %s
-          }
-        ],
-        "temperature": %s
+    String requestBody = """
+        {
+          "model": "openai/gpt-oss-120b",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You create English listening conversations for Japanese learners."
+            },
+            {
+              "role": "user",
+              "content": %s
+            }
+          ],
+          "temperature": %s
+        }
+        """.formatted(
+        toJsonString(userPrompt), temperature);
+
+    try {
+
+      String response = restClient.post()
+          .uri("/chat/completions")
+          .header("Authorization", "Bearer " + apiKey)
+          .header("Content-Type", "application/json")
+          .body(requestBody)
+          .retrieve()
+          .body(String.class);
+
+      JsonNode root = objectMapper.readTree(response);
+
+      String script = root
+          .path("choices")
+          .get(0)
+          .path("message")
+          .path("content")
+          .asText();
+
+      if (script == null || script.isBlank()) {
+        throw new RuntimeException("Groqから英文を取得できませんでした。");
       }
-      """.formatted(
-      toJsonString(userPrompt),temperature);
 
-  try
-  {
+      return script.trim();
 
-    String response = restClient.post()
-        .uri("/chat/completions")
-        .header("Authorization", "Bearer " + apiKey)
-        .header("Content-Type", "application/json")
-        .body(requestBody)
-        .retrieve()
-        .body(String.class);
+    } catch (Exception e) {
 
-    JsonNode root = objectMapper.readTree(response);
+      e.printStackTrace();
 
-    String script = root
-        .path("choices")
-        .get(0)
-        .path("message")
-        .path("content")
-        .asText();
-
-    if (script == null || script.isBlank()) {
-      throw new RuntimeException("Groqから英文を取得できませんでした。");
+      throw new RuntimeException(
+          "Groqでスクリプト生成に失敗しました: "
+              + e.getMessage());
     }
-
-    return script.trim();
-
-  }catch(
-  Exception e)
-  {
-
-    e.printStackTrace();
-
-    throw new RuntimeException(
-        "Groqでスクリプト生成に失敗しました: "
-            + e.getMessage());
-  }
   }
   // =========================
   // Google TTS → 男女の会話音声
@@ -167,7 +164,7 @@ public class ListeningService {
       String fileName = "output_" + System.currentTimeMillis() + ".mp3";
 
       Path outputPath = Path.of(
-          "src/main/resources/static/" + fileName);
+          "target/classes/static/" + fileName);
 
       Files.write(
           outputPath,
@@ -262,17 +259,14 @@ public class ListeningService {
       String length,
       String freedom) {
 
-    // ① index.htmlから受け取った条件でGroqに会話を作らせる
     String script = generateScript(
         situation,
         level,
         length,
         freedom);
 
-    // ② そのscriptから音声を作る
     String audioFileName = createSpeech(script);
 
-    // ③ スクリプトと音声ファイル名をセットで返す
     return """
         {
             "script": %s,

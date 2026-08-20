@@ -10,145 +10,134 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
-
-
 @Controller
 public class HomeController {
 
-    private final ListeningService listeningService;
+  private final ListeningService listeningService;
 
+  public HomeController(ListeningService listeningService) {
+    this.listeningService = listeningService;
+  }
 
-    public HomeController(ListeningService listeningService) {
-        this.listeningService = listeningService;
+  // 単語と意味の辞書
+  Map<String, String> words = Map.of(
+      "appraisal", "査定",
+      "proceeds", "収益",
+      "inclement", "荒れ模様の");
+
+  // ホーム
+  @GetMapping("/")
+  public String home(Model model) {
+
+    model.addAttribute("page", "home");
+
+    return "index";
+  }
+
+  // 単語
+  @GetMapping("/quiz")
+  public String quiz(Model model) {
+
+    String word = "appraisal";
+    String meaning = words.get(word);
+
+    List<String> choices = List.of(
+        "査定",
+        "収益",
+        "荒れ模様の",
+        "出来事");
+
+    model.addAttribute("page", "quiz");
+    model.addAttribute("word", word);
+    model.addAttribute("meaning", meaning);
+    model.addAttribute("choices", choices);
+
+    return "index";
+  }
+
+  // 学習
+  @GetMapping("/study")
+  public String study(Model model) {
+
+    model.addAttribute("page", "study");
+
+    return "index";
+  }
+
+  // 履歴
+  @GetMapping("/history")
+  public String history(Model model) {
+
+    model.addAttribute("page", "history");
+
+    return "index";
+  }
+
+  // 設定
+  @GetMapping("/settings")
+  public String settings(Model model) {
+
+    model.addAttribute("page", "settings");
+
+    return "index";
+  }
+
+  // 回答チェック
+  @PostMapping("/answer")
+  @ResponseBody
+  public String answer(@RequestParam String choice) {
+
+    String word = "appraisal";
+
+    String correctAnswer = words.get(word);
+
+    if (choice.equals(correctAnswer)) {
+      return "correct";
+    } else {
+      return "incorrect";
     }
+  }
 
+  // Google TTSテスト
+  @GetMapping("/tts-test")
+  @ResponseBody
+  public String ttsTest() {
 
-    // 単語と意味の辞書
-    Map<String, String> words = Map.of(
-            "appraisal", "査定",
-            "proceeds", "収益",
-            "inclement", "荒れ模様の"
-    );
+    String text = "Hello. This is a test of Google Cloud Text to Speech.";
 
+    listeningService.createSpeech(text);
 
-    // ホーム
-    @GetMapping("/")
-    public String home(Model model) {
+    return "TTS成功！ output.mp3 を作成しました。";
+  }
 
-        model.addAttribute("page", "home");
+  // Groq → Google TTS
+  @GetMapping("/generate-listening")
+  @ResponseBody
+  public String generateListening(
+      @RequestParam String situation,
+      @RequestParam String level,
+      @RequestParam String length,
+      @RequestParam String freedom) {
 
-        return "index";
+    try {
+
+      String result = listeningService.generateListening(
+          situation,
+          level,
+          length,
+          freedom);
+
+      System.out.println("generateListening result:");
+      System.out.println(result);
+
+      return result;
+
+    } catch (Exception e) {
+
+      e.printStackTrace();
+
+      return "リスニング生成エラー: " + e.getMessage();
     }
-
-
-    // 単語
-    @GetMapping("/quiz")
-    public String quiz(Model model) {
-
-        String word = "appraisal";
-        String meaning = words.get(word);
-
-        List<String> choices = List.of(
-                "査定",
-                "収益",
-                "荒れ模様の",
-                "出来事"
-        );
-
-        model.addAttribute("page", "quiz");
-        model.addAttribute("word", word);
-        model.addAttribute("meaning", meaning);
-        model.addAttribute("choices", choices);
-
-        return "index";
-    }
-
-
-    // 学習
-    @GetMapping("/study")
-    public String study(Model model) {
-
-        model.addAttribute("page", "study");
-
-        return "index";
-    }
-
-
-    // 履歴
-    @GetMapping("/history")
-    public String history(Model model) {
-
-        model.addAttribute("page", "history");
-
-        return "index";
-    }
-
-
-    // 設定
-    @GetMapping("/settings")
-    public String settings(Model model) {
-
-        model.addAttribute("page", "settings");
-
-        return "index";
-    }
-
-
-    // 回答チェック
-    @PostMapping("/answer")
-    @ResponseBody
-    public String answer(@RequestParam String choice) {
-
-        String word = "appraisal";
-
-        String correctAnswer = words.get(word);
-
-        if (choice.equals(correctAnswer)) {
-            return "correct";
-        } else {
-            return "incorrect";
-        }
-    }
-
-
-    // Google TTSテスト
-    @GetMapping("/tts-test")
-    @ResponseBody
-    public String ttsTest() {
-
-        String text =
-                "Hello. This is a test of Google Cloud Text to Speech.";
-
-        listeningService.createSpeech(text);
-
-        return "TTS成功！ output.mp3 を作成しました。";
-    }
-
-
-    // Groq → Google TTS
-    @GetMapping("/generate-listening")
-    @ResponseBody
-    public String generateListening(
-        @RequestParam String situation,
-        @RequestParam String level,
-        @RequestParam String length,
-        @RequestParam String freedom
-    ) {
-      
-        try {
-
-            String script =
-                    listeningService.generateListening(situation,level,length,freedom);
-
-            return script;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            return "リスニング生成エラー: " + e.getMessage();
-        }
-    }
-    
+  }
 
 }
