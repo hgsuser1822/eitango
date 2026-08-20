@@ -128,12 +128,17 @@ public class HomeController {
     // Groq → Google TTS
     @GetMapping("/generate-listening")
     @ResponseBody
-    public String generateListening() {
-
+    public String generateListening(
+        @RequestParam String situation,
+        @RequestParam String level,
+        @RequestParam String length,
+        @RequestParam String freedom
+    ) {
+      
         try {
 
             String script =
-                    listeningService.generateListening();
+                    listeningService.generateListening(situation,level,length,freedom);
 
             return script;
 
