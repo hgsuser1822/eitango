@@ -29,6 +29,50 @@
 
       <!-- 単語画面 -->
 
+      <!-- 単語トップ -->
+
+      <div th:if="${page == 'words'}">
+
+        <div class="app">
+
+          <h1>単語</h1>
+
+          <h2>TOEICスコアを選択</h2>
+
+          <div class="choices">
+
+            <a th:each="score : ${scores}" th:href="@{/words/score/{score}(score=${score})}" class="score-button"
+              th:text="'TOEIC ' + ${score}">
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+      <!-- ステージ一覧 -->
+
+      <div th:if="${page == 'stages'}">
+
+        <div class="app">
+
+          <h1 th:text="'TOEIC ' + ${score}"></h1>
+
+          <h2>ステージを選択</h2>
+
+          <div class="choices">
+
+            <a th:each="stage : ${stages}" th:href="@{/quiz(score=${score},stage=${stage})}" class="score-button"
+              th:text="'ステージ ' + ${stage}">
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
       <div th:if="${page == 'quiz'}">
 
         <div class="app">
@@ -70,7 +114,15 @@
           <option value="airport">空港</option>
           <option value="amusement_park">遊園地</option>
           <option value="zoo">動物園</option>
-          <option value="water_park">水族館</option>
+          <option value="library">図書館</option>
+          <option value="party">パーティー</option>
+          <option value="park">公園</option>
+          <option value="wedding">結婚式</option>
+          <option value="summer_festival">夏祭り</option>
+          <option value="youth">青春</option>
+          <option value="romantic">恋愛</option>
+          <option value="job">仕事</option>
+
         </select>
 
         <select id="level-select">
@@ -163,14 +215,13 @@
       </a>
 
 
-      <a href="/quiz" th:classappend="${page == 'quiz'} ? 'active' : ''">
+      <a href="/words" th:classappend="${page == 'words' or page == 'quiz'} ? 'active' : ''">
 
         <span>📖</span>
 
         単語
 
       </a>
-
 
       <a href="/study" th:classappend="${page == 'study'} ? 'active' : ''">
 
@@ -206,19 +257,18 @@
     <script>
 
       function checkAnswer(choice) {
-
         fetch("/answer?choice=" + encodeURIComponent(choice), {
           method: "POST"
         })
 
           .then(response => response.text())
-
           .then(result => {
 
             const resultElement =
               document.getElementById("result");
 
-            if (result === "correct") {
+            if (result === "correct" ||
+              result === "correct_finished") {
 
               resultElement.textContent = "〇";
               resultElement.style.color = "#22c55e";
@@ -227,12 +277,37 @@
 
               resultElement.textContent = "×";
               resultElement.style.color = "#ef4444";
+            }
+            // =========================
+            // 10問終了
+            // =========================
 
+            if (result === "correct_finished" ||
+              result === "incorrect_finished") {
+
+              setTimeout(() => {
+
+                alert("10問終了！");
+
+              }, 500);
+
+              return;
             }
 
-          });
 
+            // =========================
+            // 次の問題へ
+            // =========================
+
+            setTimeout(() => {
+
+              location.reload();
+
+            }, 700);
+
+          });
       }
+
 
 
       // =========================
